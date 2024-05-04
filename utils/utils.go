@@ -19,14 +19,14 @@ func StartPprof() error {
 		if err != nil {
 			return fmt.Errorf("could not create CPU profile: %w", err)
 		}
-		defer func(f *os.File) {
-			err := f.Close()
-			panic(err)
-		}(f)
 		if err := pprof.StartCPUProfile(f); err != nil {
+			_ = f.Close()
 			return fmt.Errorf("could not start CPU profile: %w", err)
 		}
-		defer pprof.StopCPUProfile()
+		pprof.StopCPUProfile()
+		if err := f.Close(); err != nil {
+			return fmt.Errorf("could not close CPU profile file: %w", err)
+		}
 	}
 
 	if *memprofile != "" {
@@ -34,15 +34,13 @@ func StartPprof() error {
 		if err != nil {
 			return fmt.Errorf("could not create memory profile: %w", err)
 		}
-		defer func(f *os.File) {
-			err := f.Close()
-			if err != nil {
-				panic(err)
-			}
-		}(f)
 		runtime.GC() // get up-to-date statistics
 		if err := pprof.WriteHeapProfile(f); err != nil {
+			_ = f.Close()
 			return fmt.Errorf("could not write memory profile: %w", err)
+		}
+		if err := f.Close(); err != nil {
+			return fmt.Errorf("could not close memory profile file: %w", err)
 		}
 	}
 

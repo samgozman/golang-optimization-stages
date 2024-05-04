@@ -26,7 +26,7 @@ import (
 //	BenchmarkServeApp-2           79          16032428 ns/op         5011579 B/op      63411 allocs/op
 //	BenchmarkServeApp-2           72          15638314 ns/op         5011674 B/op      63409 allocs/op
 func BenchmarkServeApp(b *testing.B) {
-	// start pprof profiling
+	// Start pprof profiling
 	if err := utils.StartPprof(); err != nil {
 		log.Fatal(err)
 	}
