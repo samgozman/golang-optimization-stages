@@ -1,7 +1,4 @@
-// Package stage1 is the first stage of the optimization steps.
-// Since it is the first stage, the code will represent the initial naivest approach with no optimizations.
-// Everything here is an example of the less efficient code.
-package stage1
+package stage2
 
 import (
 	"context"
