@@ -64,11 +64,8 @@ func GetJSONHandler(c *gin.Context) {
 	// 2. Return a JSON response with a message
 	users := ParseJSON(data)
 
-	// 3. Calculate the total balances
-	currents, pendings := BalancesTotals(users)
-
-	// 4. Calculate the total transactions
-	transactionsSum, transactionsCount := TransactionsTotals(users)
+	// 3. Calculate the total balances and transactions
+	currents, pendings, transactionsSum, transactionsCount := GetTotals(users)
 
 	c.JSON(200, gin.H{
 		"current":            currents.String(),
@@ -90,8 +87,8 @@ func ReadFile(filePath string) []byte {
 	return content
 }
 
-func ParseJSON(data []byte) []object.User {
-	var users []object.User
+func ParseJSON(data []byte) []*object.User {
+	var users []*object.User
 	if err := json.Unmarshal(data, &users); err != nil {
 		panic(fmt.Errorf("failed to unmarshal JSON: %w", err))
 	}
@@ -99,31 +96,27 @@ func ParseJSON(data []byte) []object.User {
 	return users
 }
 
-// BalancesTotals calculates the total balances of the users.
-func BalancesTotals(users []object.User) (currents decimal.Decimal, pendings decimal.Decimal) {
+// GetTotals calculates the total balances and transactions of the users.
+func GetTotals(users []*object.User) (
+	// Note: this can be returned as a struct, but it's not necessary for this example
+	currents decimal.Decimal,
+	pendings decimal.Decimal,
+	transactionsSum decimal.Decimal,
+	transactionsCount int,
+) {
 	for _, user := range users {
 		current, _ := decimal.NewFromString(user.Balance.Current)
 		currents = currents.Add(current)
 
 		pending, _ := decimal.NewFromString(user.Balance.Pending)
 		pendings = pendings.Add(pending)
-	}
+		transactionsCount += len(user.Transactions)
 
-	return
-}
-
-// TransactionsTotals calculates the total transactions of the users.
-func TransactionsTotals(users []object.User) (sum decimal.Decimal, count int) {
-	var transactionsSum decimal.Decimal
-	var transactionsCount int
-
-	for _, user := range users {
 		for _, transaction := range user.Transactions {
 			amount, _ := decimal.NewFromString(transaction.Amount)
 			transactionsSum = transactionsSum.Add(amount)
-			transactionsCount++
 		}
 	}
 
-	return transactionsSum, transactionsCount
+	return currents, pendings, transactionsSum, transactionsCount
 }

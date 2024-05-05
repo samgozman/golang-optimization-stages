@@ -1,0 +1,16 @@
+goos: darwin
+goarch: arm64
+pkg: github.com/samgozman/golang-optimization-stages/stage4
+BenchmarkServeApp
+BenchmarkServeApp-10    	     277	   3953330 ns/op	 3697193 B/op	   31744 allocs/op
+BenchmarkServeApp-10    	     306	   3929780 ns/op	 3693402 B/op	   31739 allocs/op
+BenchmarkServeApp-10    	     296	   4056776 ns/op	 3692395 B/op	   31737 allocs/op
+BenchmarkServeApp-10    	     262	   4224350 ns/op	 3691306 B/op	   31736 allocs/op
+BenchmarkServeApp-10    	     277	   4270494 ns/op	 3690602 B/op	   31734 allocs/op
+BenchmarkServeApp-10    	     285	   4258468 ns/op	 3689356 B/op	   31733 allocs/op
+BenchmarkServeApp-10    	     273	   4604966 ns/op	 3688845 B/op	   31732 allocs/op
+BenchmarkServeApp-10    	     277	   4334403 ns/op	 3688660 B/op	   31732 allocs/op
+BenchmarkServeApp-10    	     265	   4436682 ns/op	 3688503 B/op	   31731 allocs/op
+BenchmarkServeApp-10    	     274	   4413024 ns/op	 3687727 B/op	   31731 allocs/op
+PASS
+ok  	github.com/samgozman/golang-optimization-stages/stage4	16.999s
