@@ -18,8 +18,8 @@ import (
 )
 
 var (
-	once    sync.Once
-	content []byte
+	once     sync.Once
+	response gin.H
 )
 
 // ServeApp just a simple server that runs one route
@@ -58,32 +58,34 @@ func ServeApp(ctx context.Context) {
 
 // GetJSONHandler is a simple handler that returns a JSON response with a message
 func GetJSONHandler(c *gin.Context) {
-	// 1. Read the content of the file dummy_data.json
-	data := ReadFile("../object/dummy_data.json")
+	once.Do(func() {
+		// 1. Read the content of the file dummy_data.json
+		data := ReadFile("../object/dummy_data.json")
 
-	// 2. Return a JSON response with a message
-	users := ParseJSON(data)
+		// 2. Return a JSON response with a message
+		users := ParseJSON(data)
 
-	// 3. Calculate the total balances and transactions
-	currents, pendings, transactionsSum, transactionsCount := GetTotals(users)
+		// 3. Calculate the total balances and transactions
+		currents, pendings, transactionsSum, transactionsCount := GetTotals(users)
 
-	c.JSON(200, gin.H{
-		"current":            currents.String(),
-		"pending":            pendings.String(),
-		"transactions_sum":   transactionsSum.String(),
-		"transactions_count": transactionsCount,
+		response = gin.H{
+			"current":            currents.String(),
+			"pending":            pendings.String(),
+			"transactions_sum":   transactionsSum.String(),
+			"transactions_count": transactionsCount,
+		}
 	})
+
+	c.JSON(200, response)
 }
 
 // ReadFile reads a file and returns its content as a string
 func ReadFile(filePath string) []byte {
-	once.Do(func() {
-		var err error
-		content, err = os.ReadFile(filePath)
-		if err != nil {
-			panic(fmt.Errorf("failed to read file: %w", err))
-		}
-	})
+	content, err := os.ReadFile(filePath)
+	if err != nil {
+		panic(fmt.Errorf("failed to read file: %w", err))
+	}
+
 	return content
 }
 
